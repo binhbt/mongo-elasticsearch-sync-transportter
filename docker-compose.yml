@@ -1,0 +1,37 @@
+#
+# syntax: https://docs.docker.com/compose/yml/
+#
+
+version: "3"
+
+services:
+  mongodb:
+    image: mongo
+    ports:
+      - "27021:27017"
+
+  mongo-seed:
+    build: ./mongo-seed
+    links:
+      - mongodb
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+    container_name: elasticsearch
+    command: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - http.cors.enabled=true
+      - "ES_JAVA_OPTS=-Xms750m -Xmx750m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+volumes:
+  demo-data:
+networks:
+  love-net:
+
+
